@@ -1,26 +1,31 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Heart, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Recycle, Mail, Lock, Eye, EyeOff, ShoppingBag, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 
-const LoginPage = ({ onLogin }) => {
+interface LoginPageProps {
+  onLogin: (user: any) => void;
+}
+
+const LoginPage = ({ onLogin }: LoginPageProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     // Simulate API call
     setTimeout(() => {
       const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const user = users.find(u => u.email === email && u.password === password);
+      const user = users.find((u: any) => u.email === email && u.password === password);
       
       if (user) {
         onLogin(user);
@@ -28,6 +33,13 @@ const LoginPage = ({ onLogin }) => {
           title: "Login Successful",
           description: `Welcome back, ${user.name}!`,
         });
+        
+        // Navigate based on user role
+        if (user.role === 'waste-management') {
+          navigate('/waste-management-dashboard');
+        } else {
+          navigate('/');
+        }
       } else {
         toast({
           title: "Login Failed",
@@ -40,17 +52,17 @@ const LoginPage = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 p-4">
       <div className="absolute inset-0 bg-black opacity-20"></div>
       <Card className="w-full max-w-md relative z-10 backdrop-blur-sm bg-white/90 shadow-2xl border-0">
         <CardHeader className="text-center pb-8">
-          <div className="mx-auto bg-gradient-to-r from-red-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mb-4 animate-pulse">
-            <Heart className="w-8 h-8 text-white" />
+          <div className="mx-auto bg-gradient-to-r from-emerald-500 to-teal-500 w-16 h-16 rounded-full flex items-center justify-center mb-4 animate-pulse">
+            <Recycle className="w-8 h-8 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Heart Health Monitor
+          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+            Welcome to E-Sawctha
           </CardTitle>
-          <p className="text-gray-600 mt-2">Sign in to access your health dashboard</p>
+          <p className="text-gray-600 mt-2">Sign in to continue to your account</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -61,7 +73,7 @@ const LoginPage = ({ onLogin }) => {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 h-12 border-2 focus:border-blue-500 transition-all duration-300"
+                className="pl-10 h-12 border-2 focus:border-emerald-500 transition-all duration-300"
                 required
               />
             </div>
@@ -72,7 +84,7 @@ const LoginPage = ({ onLogin }) => {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 pr-10 h-12 border-2 focus:border-blue-500 transition-all duration-300"
+                className="pl-10 pr-10 h-12 border-2 focus:border-emerald-500 transition-all duration-300"
                 required
               />
               <button
@@ -86,7 +98,7 @@ const LoginPage = ({ onLogin }) => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               {isLoading ? (
                 <div className="flex items-center space-x-2">
@@ -103,7 +115,7 @@ const LoginPage = ({ onLogin }) => {
               Don't have an account?{' '}
               <Link 
                 to="/signup" 
-                className="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-200"
+                className="text-emerald-600 hover:text-emerald-800 font-semibold transition-colors duration-200"
               >
                 Sign up here
               </Link>

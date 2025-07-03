@@ -3,9 +3,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Camera, MapPin, ShoppingBag, Recycle, Leaf, Heart } from 'lucide-react';
+import { Camera, MapPin, ShoppingBag, Recycle, Leaf, Heart, User, LogOut } from 'lucide-react';
 
-const HomePage = () => {
+interface HomePageProps {
+  user?: any;
+  onLogout?: () => void;
+}
+
+const HomePage = ({ user, onLogout }: HomePageProps) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
       {/* Header */}
@@ -27,6 +32,17 @@ const HomePage = () => {
                   Listings
                 </Button>
               </Link>
+              {user && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600">
+                    Welcome, {user.name}
+                  </span>
+                  <Button variant="ghost" size="sm" onClick={onLogout}>
+                    <LogOut className="w-4 h-4 mr-1" />
+                    Logout
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
