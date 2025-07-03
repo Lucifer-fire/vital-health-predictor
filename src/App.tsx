@@ -5,38 +5,18 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import LoginPage from '@/components/auth/LoginPage';
-import SignupPage from '@/components/auth/SignupPage';
-import Dashboard from '@/components/dashboard/Dashboard';
-import PredictionForm from '@/components/prediction/PredictionForm';
-import ResultsPage from '@/components/results/ResultsPage';
-import FieldDescriptions from '@/components/info/FieldDescriptions';
-import NotFound from "./pages/NotFound";
+import HomePage from '@/components/home/HomePage';
+import SellItemPage from '@/components/sell/SellItemPage';
+import WasteManagementPage from '@/components/waste/WasteManagementPage';
+import ItemListingsPage from '@/components/listings/ItemListingsPage';
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [items, setItems] = useState([]);
 
-  useEffect(() => {
-    const user = localStorage.getItem('currentUser');
-    if (user) {
-      setCurrentUser(JSON.parse(user));
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  const handleLogin = (userData: any) => {
-    setCurrentUser(userData);
-    setIsAuthenticated(true);
-    localStorage.setItem('currentUser', JSON.stringify(userData));
-  };
-
-  const handleLogout = () => {
-    setCurrentUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('currentUser');
+  const addItem = (newItem) => {
+    setItems(prev => [...prev, { ...newItem, id: Date.now() }]);
   };
 
   return (
@@ -44,66 +24,14 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+        <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
           <BrowserRouter>
             <Routes>
-              <Route 
-                path="/login" 
-                element={
-                  !isAuthenticated ? 
-                  <LoginPage onLogin={handleLogin} /> : 
-                  <Navigate to="/dashboard" />
-                } 
-              />
-              <Route 
-                path="/signup" 
-                element={
-                  !isAuthenticated ? 
-                  <SignupPage onLogin={handleLogin} /> : 
-                  <Navigate to="/dashboard" />
-                } 
-              />
-              <Route 
-                path="/dashboard" 
-                element={
-                  isAuthenticated ? 
-                  <Dashboard user={currentUser} onLogout={handleLogout} /> : 
-                  <Navigate to="/login" />
-                } 
-              />
-              <Route 
-                path="/predict" 
-                element={
-                  isAuthenticated ? 
-                  <PredictionForm user={currentUser} onLogout={handleLogout} /> : 
-                  <Navigate to="/login" />
-                } 
-              />
-              <Route 
-                path="/results" 
-                element={
-                  isAuthenticated ? 
-                  <ResultsPage user={currentUser} onLogout={handleLogout} /> : 
-                  <Navigate to="/login" />
-                } 
-              />
-              <Route 
-                path="/info" 
-                element={
-                  isAuthenticated ? 
-                  <FieldDescriptions user={currentUser} onLogout={handleLogout} /> : 
-                  <Navigate to="/login" />
-                } 
-              />
-              <Route 
-                path="/" 
-                element={
-                  isAuthenticated ? 
-                  <Navigate to="/dashboard" /> : 
-                  <Navigate to="/login" />
-                } 
-              />
-              <Route path="*" element={<NotFound />} />
+              <Route path="/" element={<HomePage />} />
+              <Route path="/sell" element={<SellItemPage onAddItem={addItem} />} />
+              <Route path="/listings" element={<ItemListingsPage items={items} />} />
+              <Route path="/waste-management" element={<WasteManagementPage />} />
+              <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </BrowserRouter>
         </div>
